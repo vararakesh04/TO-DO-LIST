@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal</title>
+</head>
+<style>
+    .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: 200ms ease-in-out;
+        border: 1px solid black;
+        border-radius: 10px;
+        z-index: 10;
+        background-color: white;
+        width: 500px;
+        max-width: 80%;
+
+    }
+
+    .modal.active {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid black;
+    }
+
+    .modal-header .title {
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .modal-header .close-button {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .modal-body {
+        padding: 10px 15px;
+    }
+
+    #overlay {
+        position: fixed;
+        opacity: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, .5);
+        pointer-events: none;
+        transition: 200ms ease-in-out;
+    }
+
+    #overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .form{
+        display: flex;
+        flex-direction: column;
+        font-size: 26px;
+        margin:3px 0px;
+    }
+    .form>label{
+        margin-top: 5px;
+    }
+    .form>button{
+        margin: 3px 5px;
+    }
+</style>
+
+<body>
+    <button data-modal-target="#modal1">Open modal</button>
+    <div class="modal" id="modal1">
+        <div class="modal-header">
+            <div class="title">Add a note</div>
+            <button data-close-button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form class="form">
+                <label for="title">Title</label>
+                <input type="text" id="title"  value="" required>
+                <label for="dis">Discription</label>
+                <input type="text" id="dis"  value="" >
+                <div>
+                    <input type="submit" value="Submit" id="addnote-btn">
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <button data-modal-target="#modal2">Open modal2</button>
+    <div class="modal" id="modal2">
+        <div class="modal-header">
+            <div class="title">Edit a note</div>
+            <button data-close-button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form class="form">
+                <label for="new_title">Title</label>
+                <input type="text" id="new_title"  value="" required>
+                <label for="new_dis">Discription</label>
+                <input type="text" id="new_dis"  value="" >
+                <div>
+                    <input type="submit" value="Submit" id="editnote-btn">
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <script>
+        const openModalButtons = document.querySelectorAll('[data-modal-target]')
+        const closeModalButtons = document.querySelectorAll('[data-close-button]')
+        const overlay = document.getElementById('overlay')
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = document.querySelector(button.dataset.modalTarget);
+                openModal(modal);
+            })
+        })
+
+        overlay.addEventListener('click', () => {
+            const modals = document.querySelectorAll('.modal.active');
+            modals.forEach(modal => {
+                closeModal(modal);
+            })
+        })
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal');
+                closeModal(modal);
+            })
+        })
+
+        let openModal = (modal) => {
+            if (modal == null)
+                return;
+            modal.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        let closeModal = (modal) => {
+            if (modal == null)
+                return;
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        let a=document.getElementById('addnote-btn');
+        a.onclick=(ev)=>{
+            ev.preventDefault();
+            let key=document.getElementById('title').value;
+            let value=document.getElementById('dis').value;
+            console.log(key,value);
+            document.forms[0].reset();
+            const modal = a.closest('.modal');
+                closeModal(modal);
+        }
+
+        let b=document.getElementById('editnote-btn');
+        b.onclick=(ev)=>{
+            ev.preventDefault();
+            let key=document.getElementById('new_title').value;
+
+            let value=document.getElementById('new_dis').value;
+            console.log(key,value);
+
+            const modal = b.closest('.modal');
+                closeModal(modal);
+        }
+
+        document.addEventListener('DOMContentLoader',()=>{
+            document.getElementById('addnote-btn').addEventListener('click',addNote);
+            document.getElementById('editnote-btn').addEventListener('click',editNote);
+        })
+    </script>
+</body>
+
+</html>
